@@ -72,7 +72,10 @@ export const ChatProvider = ({children})=>{
             if(selectedUser && newMessage.senderId === selectedUser._id){
                 newMessage.seen = true;
                 setMessages((prevMessages)=> [...prevMessages, newMessage]);
-                axios.put(`/api/messages/mark/${newMessage._id}`);
+                // Mark message as seen without blocking
+                axios.put(`/api/messages/mark/${newMessage._id}`).catch(err => {
+                    console.error("Error marking message as seen:", err);
+                });
             }else{
                 setUnseenMessages((prevUnseenMessages)=>({
                     ...prevUnseenMessages, [newMessage.senderId] :

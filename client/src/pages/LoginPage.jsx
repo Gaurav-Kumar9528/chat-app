@@ -29,7 +29,7 @@ const LoginPage = () => {
     justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl'>
 
       {/* -------- left -------- */}
-      <img src={assets.logo_big} alt="" className='w-[min(30vw, 250px)]'/>
+      <img src={assets.logo_big} alt="Chat App Logo" className='w-[min(30vw, 250px)]' onError={(e)=>{e.target.src = assets.logo_icon}}/>
 
       {/* -------- right -------- */}
 
@@ -37,8 +37,8 @@ const LoginPage = () => {
       flex-col gap-6 rounded-lg shadow-lg'>
         <h2 className='font-medium text-2xl flex justify-between items-center'>
           {currState}
-          {isDataSubmitted && <img onClick={()=> setIsDataSubmitted(false)} src={assets.arrow_icon} alt="" className='w-5 
-          cursor-pointer'/>}
+          {isDataSubmitted && <img onClick={()=> setIsDataSubmitted(false)} src={assets.arrow_icon} alt="Back" className='w-5 
+          cursor-pointer hover:opacity-70 transition-opacity'/>}
           
           </h2>
 
@@ -67,7 +67,7 @@ const LoginPage = () => {
            )
           }
 
-          <button type='submit' className='py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer'>
+          <button type='submit' className='py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer hover:opacity-90 transition-opacity font-medium'>
             {currState === "Sign up" ? "Create Account" : "Login Now"}
           </button>
 
@@ -78,13 +78,13 @@ const LoginPage = () => {
 
           <div className='flex flex-col gap-2'>
             {currState === "Sign up" ? (
-              <p className='text-sm text-gray-600'>Already  have an account? <span 
+              <p className='text-sm text-gray-600'>Already have an account? <span 
               onClick={()=>{setCurrState("Login"); setIsDataSubmitted(false)}}
-              className='font-medium text-violet-500 cursor-pointer'>Login here</span></p>
+              className='font-medium text-violet-500 cursor-pointer hover:text-violet-400 transition-colors'>Login here</span></p>
             ) : (
               <p className='text-sm text-gray-600'>Create an account <span 
               onClick={()=> setCurrState("Sign up")}
-              className='font-medium text-violet-500 cursor-pointer'>Click here</span></p>
+              className='font-medium text-violet-500 cursor-pointer hover:text-violet-400 transition-colors'>Click here</span></p>
             )}
           </div>
 
