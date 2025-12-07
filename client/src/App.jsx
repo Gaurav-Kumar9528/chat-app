@@ -10,27 +10,8 @@ import assets from './assets/assets'
 const App = () =>{
   const { authUser } = useContext(AuthContext)
   return (
-    <div 
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed" 
-      style={{backgroundImage: `url(${assets.bgImage})`}}
-    >
-      <Toaster 
-        position="top-center"
-        containerStyle={{
-          top: '1rem',
-        }}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#1f2937',
-            color: '#fff',
-            borderRadius: '0.75rem',
-            padding: '0.75rem 1rem',
-            fontSize: '0.875rem',
-            maxWidth: '90vw',
-          },
-        }}
-      />
+    <div className="bg-[url('./src/assets/bgImage.svg')] bg-contain">
+      <Toaster/>
       <Routes>
         <Route path='/' element={authUser ? <HomePage /> : <Navigate to="/login" />}/>
         <Route path='/login' element={!authUser ? <LoginPage /> : <Navigate to="/" />}/>

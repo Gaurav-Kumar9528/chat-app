@@ -2,66 +2,10 @@
 
 @import "tailwindcss";
 
-* {
+*{
   font-family: "Outfit", sans-serif;
-  box-sizing: border-box;
 }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-#root {
-  height: 100vh;
-  height: 100dvh;
-  width: 100%;
-  overflow: hidden;
-}
-
-@supports (-webkit-touch-callout: none) {
-  #root {
-    height: -webkit-fill-available;
-  }
-}
-
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(139, 92, 246, 0.3);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(139, 92, 246, 0.5);
-}
-
-@media (max-width: 640px) {
-  ::-webkit-scrollbar {
-    display: none;
-  }
-  
-  * {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-overflow-scrolling: touch;
-  }
-}
-
-* {
-  scroll-behavior: smooth;
-}
-
-::selection {
-  background-color: rgba(139, 92, 246, 0.3);
-  color: white;
+::-webkit-scrollbar{
+  display: none;
 }
