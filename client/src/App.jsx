@@ -11,7 +11,7 @@ const App = () =>{
   const { authUser } = useContext(AuthContext)
   return (
     <div 
-      className="min-h-screen h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed" 
+      className="min-h-screen w-full bg-cover bg-center bg-no-repeat bg-fixed" 
       style={{backgroundImage: `url(${assets.bgImage})`}}
     >
       <Toaster 
@@ -25,23 +25,9 @@ const App = () =>{
             background: '#1f2937',
             color: '#fff',
             borderRadius: '0.75rem',
-            padding: '1rem',
+            padding: '0.75rem 1rem',
             fontSize: '0.875rem',
             maxWidth: '90vw',
-          },
-          success: {
-            duration: 3000,
-            iconTheme: {
-              primary: '#10b981',
-              secondary: '#fff',
-            },
-          },
-          error: {
-            duration: 4000,
-            iconTheme: {
-              primary: '#ef4444',
-              secondary: '#fff',
-            },
           },
         }}
       />

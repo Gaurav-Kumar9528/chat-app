@@ -8,13 +8,13 @@ const HomePage = () => {
   const {selectedUser} = useContext(ChatContext)
 
   return (
-    <div className='w-full h-full max-h-screen overflow-hidden p-0 sm:p-1 md:p-2 lg:p-4 xl:px-[8%] xl:py-[2%]'>
+    <div className='w-full h-screen overflow-hidden p-0 sm:p-2 md:p-4 lg:px-[10%] lg:py-[3%]'>
       <div className={`
         backdrop-blur-xl 
-        border-0 sm:border sm:border-gray-600/50 md:border-2 md:border-gray-600 
-        rounded-none sm:rounded-lg md:rounded-xl lg:rounded-2xl 
+        border-0 sm:border-2 border-gray-600 
+        rounded-none sm:rounded-lg md:rounded-2xl 
         overflow-hidden 
-        h-full max-h-screen 
+        h-full 
         grid grid-cols-1 
         relative
         ${selectedUser 
