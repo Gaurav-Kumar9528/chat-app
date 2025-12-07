@@ -30,26 +30,37 @@ export const ChatProvider = ({children})=>{
     // function to get messages for selected user
     const getMessages = async (userId)=>{
         try {
+            if(!userId) return;
             const { data } =  await axios.get(`/api/messages/${userId}`);
             if (data.success){
-                setMessages(data.messages)
+                setMessages(data.messages || [])
+            } else {
+                toast.error(data.message || "Failed to load messages")
             }
         } catch (error) {
-            toast.error(error.message)
+            console.error("Error getting messages:", error);
+            toast.error(error.response?.data?.message || error.message || "Failed to load messages")
+            setMessages([])
         }
     }
 
     // function to send message to selected user
     const sendMessage = async (messageData)=>{
         try {
+            if(!selectedUser || !selectedUser._id){
+                toast.error("Please select a user to send message")
+                return;
+            }
             const {data} = await axios.post(`/api/messages/send/${selectedUser._id}`, messageData);
             if(data.success){
                 setMessages((prevMessages)=>[...prevMessages, data.newMessage])
             }else{
-                toast.error(data.message);
+                toast.error(data.message || "Failed to send message");
             }
         } catch (error) {
-            toast.error(error.message);
+            console.error("Error sending message:", error);
+            toast.error(error.response?.data?.message || error.message || "Failed to send message");
+            throw error;
         }
     }
 

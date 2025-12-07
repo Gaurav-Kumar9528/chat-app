@@ -32,12 +32,19 @@ export const getMessages = async (req, res) =>{
         const { id: selectedUserId } = req.params;
         const myId = req.user._id;
 
+        // Check if receiver exists
+        const receiver = await User.findById(selectedUserId);
+        if(!receiver){
+            return res.json({success: false, message: "User not found"})
+        }
+
         const messages = await Message.find({
             $or: [
                 {senderId: myId, receiverId: selectedUserId},
                 {senderId: selectedUserId, receiverId: myId},
             ]
-        })
+        }).sort({createdAt: 1});
+        
         await Message.updateMany({senderId: selectedUserId, receiverId: myId}, {seen: true});
         
         res.json({success: true, messages})
@@ -67,15 +74,37 @@ export const sendMessage = async (req, res) =>{
         const receiverId = req.params.id;
         const senderId = req.user._id;
 
+        // Validate that either text or image is provided
+        if(!text && !image){
+            return res.json({success: false, message: "Message text or image is required"})
+        }
+
+        // Check if receiver exists
+        const receiver = await User.findById(receiverId);
+        if(!receiver){
+            return res.json({success: false, message: "Receiver not found"})
+        }
+
+        // Validate text length if provided
+        if(text && text.trim().length === 0){
+            return res.json({success: false, message: "Message cannot be empty"})
+        }
+
         let imageUrl;
         if(image){
-            const uploadResponse = await cloudinary.uploader.upload(image)
-            imageUrl = uploadResponse.secure_url;
+            try {
+                const uploadResponse = await cloudinary.uploader.upload(image)
+                imageUrl = uploadResponse.secure_url;
+            } catch (uploadError) {
+                console.log("Cloudinary upload error:", uploadError.message);
+                return res.json({success: false, message: "Failed to upload image"})
+            }
         }
+        
         const newMessage =  await Message.create({
             senderId,
             receiverId,
-            text,
+            text: text?.trim() || undefined,
             image: imageUrl
         })
         

@@ -19,13 +19,21 @@ export const AuthProvider = ({ children })=>{
     // Check if user is authenticated and if so, set the user data and connect the socket
     const checkAuth = async () => {
         try {
+            if(!token) return;
             const { data } = await axios.get("/api/auth/check");
             if (data.success) {
                 setAuthUser(data.user)
                 connectSocket(data.user)
+            } else {
+                // Token is invalid, clear it
+                localStorage.removeItem("token");
+                setToken(null);
             }
         } catch (error) {
-            toast.error(error.message)
+            // Token is invalid or expired
+            localStorage.removeItem("token");
+            setToken(null);
+            setAuthUser(null);
         }
     }
 
@@ -71,24 +79,48 @@ const logout = async () =>{
     setAuthUser(null);
     setOnlineUsers([]);
     axios.defaults.headers.common["token"] = null;
+    if(socket && socket.connected){
+        socket.disconnect();
+    }
+    setSocket(null);
     toast.success("Logged out successfully")
-    socket.disconnect();
 }
 
     // Connect socket function to handle socket connection and online users updates
     const connectSocket = (userData)=>{
-        if(!userData || socket?.connection) return;
+        if(!userData) return;
+        
+        // Disconnect existing socket if any
+        if(socket && socket.connected){
+            socket.disconnect();
+        }
+        
         const newSocket = io(backendUrl, {
             query:{
                 userId: userData._id
-            }
+            },
+            reconnection: true,
+            reconnectionDelay: 1000,
+            reconnectionAttempts: 5
         });
-        newSocket.connect();
-        setSocket(newSocket);
-
+        
+        newSocket.on("connect", () => {
+            console.log("Socket connected");
+        });
+        
+        newSocket.on("disconnect", () => {
+            console.log("Socket disconnected");
+        });
+        
+        newSocket.on("connect_error", (error) => {
+            console.error("Socket connection error:", error);
+        });
+        
         newSocket.on("getOnlineUsers", (userIds)=>{
             setOnlineUsers(userIds);
-        })
+        });
+        
+        setSocket(newSocket);
     }
 
     useEffect(()=>{

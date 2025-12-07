@@ -19,23 +19,47 @@ const ChatContainer = () => {
   // Handle sending a message
   const handleSendMessage = async (e)=>{
       e.preventDefault();
-      if(input.trim() === "") return null;
-      await sendMessage({text: input.trim()});
-      setInput("")
+      if(input.trim() === "" || !selectedUser) return;
+      try {
+        await sendMessage({text: input.trim()});
+        setInput("")
+      } catch (error) {
+        console.error("Error sending message:", error);
+      }
   }
 
   // Handle sending an image
   const handleSendImage = async (e) =>{
       const file = e.target.files[0];
-      if(!file || !file.type.startsWith("image/")){
-          toast.error("select an image file")
+      if(!file){
+          return;
+      }
+      if(!file.type.startsWith("image/")){
+          toast.error("Please select an image file")
+          return;
+      }
+      // Check file size (max 5MB)
+      if(file.size > 5 * 1024 * 1024){
+          toast.error("Image size should be less than 5MB")
+          return;
+      }
+      if(!selectedUser){
+          toast.error("Please select a user to send image")
           return;
       }
       const reader = new FileReader();
 
       reader.onloadend = async ()=>{
-        await sendMessage({image: reader.result})
-        e.target.value = "" 
+        try {
+          await sendMessage({image: reader.result})
+          e.target.value = ""
+        } catch (error) {
+          console.error("Error sending image:", error);
+          toast.error("Failed to send image")
+        }
+      }
+      reader.onerror = () => {
+        toast.error("Error reading image file")
       }
       reader.readAsDataURL(file)
   }
@@ -66,22 +90,39 @@ const ChatContainer = () => {
       </div>
       {/* ------- chat area ------- */}
       <div className='flex flex-col flex-1 overflow-y-scroll p-2 sm:p-3 pb-20 sm:pb-24'>
-        {messages.map((msg, index)=> (
-            <div key={index} className={`flex items-end gap-2 mb-2 sm:mb-4 ${msg.senderId === authUser._id ? 'justify-end' : 'justify-start flex-row-reverse'}`}> 
-                {msg.image ? (
-                   <img src={msg.image} alt="" className='max-w-[70%] sm:max-w-[230px] border border-gray-700 rounded-lg overflow-hidden'/>
-                ):(
-                   <p className={`p-2 sm:p-3 max-w-[75%] sm:max-w-[200px] md:max-w-[250px] text-sm sm:text-base font-light rounded-lg break-words bg-violet-500/30 text-white ${msg.
-                    senderId === authUser._id ? 'rounded-br-none' : 'rounded-bl-none'}`}>{msg.text}</p>
+        {messages.length === 0 ? (
+          <div className='flex flex-col items-center justify-center h-full text-gray-400'>
+            <p className='text-sm sm:text-base'>No messages yet. Start the conversation!</p>
+          </div>
+        ) : (
+          messages.map((msg)=> (
+            <div key={msg._id || msg.id || Date.now() + Math.random()} className={`flex items-end gap-2 mb-2 sm:mb-4 ${msg.senderId === authUser._id ? 'justify-end' : 'justify-start'}`}> 
+                {msg.senderId !== authUser._id && (
+                  <div className='text-center text-xs flex-shrink-0 order-1'>
+                      <img src={selectedUser?.profilePic || assets.avatar_icon} 
+                        alt="" className='w-6 sm:w-7 rounded-full' />
+                      <p className='text-gray-500 text-[10px] sm:text-xs mt-1'>{formatMessageTime(msg.createdAt)}</p>
+                  </div>
                 )}
-                <div className='text-center text-xs flex-shrink-0'>
-                    <img src={msg.senderId === authUser._id ? authUser?.
-                      profilePic || assets.avatar_icon : selectedUser?.profilePic || assets.avatar_icon} 
-                      alt="" className='w-6 sm:w-7 rounded-full' />
-                    <p className='text-gray-500 text-[10px] sm:text-xs mt-1'>{formatMessageTime(msg.createdAt)}</p>
-                </div>
+                {msg.image ? (
+                   <img src={msg.image} alt="Shared" className={`max-w-[70%] sm:max-w-[230px] border border-gray-700 rounded-lg overflow-hidden ${msg.senderId === authUser._id ? 'order-2' : 'order-2'}`}/>
+                ):(
+                   <p className={`p-2 sm:p-3 max-w-[75%] sm:max-w-[200px] md:max-w-[250px] text-sm sm:text-base font-light rounded-lg break-words text-white order-2 ${
+                    msg.senderId === authUser._id 
+                      ? 'bg-violet-500/50 rounded-br-none' 
+                      : 'bg-gray-700/50 rounded-bl-none'
+                  }`}>{msg.text}</p>
+                )}
+                {msg.senderId === authUser._id && (
+                  <div className='text-center text-xs flex-shrink-0 order-3'>
+                      <img src={authUser?.profilePic || assets.avatar_icon} 
+                        alt="" className='w-6 sm:w-7 rounded-full' />
+                      <p className='text-gray-500 text-[10px] sm:text-xs mt-1'>{formatMessageTime(msg.createdAt)}</p>
+                  </div>
+                )}
             </div>
-        ))}
+          ))
+        )}
         <div ref={scrollEnd}></div>
       </div>
 
@@ -96,7 +137,9 @@ const ChatContainer = () => {
                 <img src={assets.gallery_icon} alt="Upload image" className='w-4 sm:w-5 mr-1 sm:mr-2'/>
             </label>
         </div>
-        <img onClick={handleSendMessage} src={assets.send_button} alt="Send" className='w-6 sm:w-7 cursor-pointer flex-shrink-0'/>
+        <button onClick={handleSendMessage} disabled={!input.trim()} className='w-6 sm:w-7 h-6 sm:h-7 flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed'>
+          <img src={assets.send_button} alt="Send" className='w-full h-full cursor-pointer'/>
+        </button>
     </div>
 
     </div>

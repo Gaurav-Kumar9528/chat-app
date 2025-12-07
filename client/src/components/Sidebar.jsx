@@ -16,8 +16,9 @@ const Sidebar = () => {
 
     const navigate = useNavigate();
 
-    const filteredUsers = input ? users.filter((user)=> user.fullName.toLowerCase().
-    includes(input.toLowerCase())) : users;
+    const filteredUsers = input ? users.filter((user)=> 
+      user.fullName?.toLowerCase().includes(input.toLowerCase())
+    ) : users;
 
     useEffect(()=>{
       getUsers();
@@ -46,10 +47,15 @@ const Sidebar = () => {
       </div>
 
       <div className='flex flex-col gap-1'>
-          {filteredUsers.map((user, index)=>(
+          {filteredUsers.length === 0 ? (
+            <div className='text-center text-gray-400 py-8'>
+              <p className='text-sm'>{input ? 'No users found' : 'No users available'}</p>
+            </div>
+          ) : (
+            filteredUsers.map((user)=>(
               <div onClick={()=> {setSelectedUser(user); setUnseenMessages(prev=>
               ({...prev, [user._id]:0}))}}
-               key={index} className={`relative flex items-center gap-2 p-2 sm:p-3 pl-3 sm:pl-4 rounded cursor-pointer transition-colors hover:bg-[#282142]/30 ${selectedUser?._id === user._id ? 'bg-[#282142]/50' : ''}`}>
+               key={user._id || user.id} className={`relative flex items-center gap-2 p-2 sm:p-3 pl-3 sm:pl-4 rounded cursor-pointer transition-colors hover:bg-[#282142]/30 ${selectedUser?._id === user._id ? 'bg-[#282142]/50' : ''}`}>
                   <img src={user?.profilePic || assets.avatar_icon} alt="" className='w-8 sm:w-9 md:w-[35px] aspect-[1/1] rounded-full flex-shrink-0'/>
                   <div className='flex flex-col leading-tight sm:leading-5 min-w-0 flex-1'>
                       <p className='text-sm sm:text-base truncate'>{user.fullName}</p>
@@ -63,7 +69,8 @@ const Sidebar = () => {
                   text-xs h-5 w-5 flex justify-center items-center rounded-full 
                   bg-violet-500/50 flex-shrink-0'>{unseenMessages[user._id]}</p>}
               </div> 
-          ) )}
+            ))
+          )}
       </div>
 
     </div>

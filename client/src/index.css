@@ -4,6 +4,7 @@
 
 *{
   font-family: "Outfit", sans-serif;
+  box-sizing: border-box;
 }
 
 ::-webkit-scrollbar{
@@ -13,6 +14,12 @@
 /* Responsive improvements */
 html, body {
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  min-height: 100vh;
 }
 
 /* Touch-friendly tap targets for mobile */
@@ -26,4 +33,16 @@ html, body {
 /* Smooth scrolling */
 * {
   scroll-behavior: smooth;
+}
+
+/* Selection color */
+::selection {
+  background-color: rgba(139, 92, 246, 0.3);
+  color: white;
+}
+
+/* Focus visible for accessibility */
+*:focus-visible {
+  outline: 2px solid rgba(139, 92, 246, 0.5);
+  outline-offset: 2px;
 }

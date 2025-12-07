@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react'
 import assets from '../assets/assets'
 import { AuthContext } from '../../context/AuthContext'
+import toast from 'react-hot-toast'
 
 const LoginPage = () => {
 
@@ -13,15 +14,33 @@ const LoginPage = () => {
 
   const {login} = useContext(AuthContext)
 
-  const onSumbitHandler = (event)=>{
+  const onSumbitHandler = async (event)=>{
     event.preventDefault();
 
     if(currState === 'Sign up' && !isDataSubmitted){
+      if(!fullName.trim() || !email.trim() || !password.trim()){
+        toast.error("Please fill all required fields")
+        return;
+      }
       setIsDataSubmitted(true)
       return;
     }
+    
+    if(currState === 'Sign up' && isDataSubmitted){
+      if(!bio.trim()){
+        toast.error("Please provide a bio")
+        return;
+      }
+    }
+    
+    if(currState === 'Login'){
+      if(!email.trim() || !password.trim()){
+        toast.error("Please fill all fields")
+        return;
+      }
+    }
      
-    login(currState=== "Sign up" ? 'signup' : 'login', {fullName, email, password, bio})
+    await login(currState=== "Sign up" ? 'signup' : 'login', {fullName, email, password, bio})
   }
 
   return (

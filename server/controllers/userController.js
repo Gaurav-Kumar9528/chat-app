@@ -10,12 +10,12 @@ export const signup = async (req, res)=>{
 
     try {
         if(!fullName || !email || !password || !bio){
-           return res.json({success: false, Message: "Missing Details"})
+           return res.json({success: false, message: "Missing Details"})
         } 
         const user = await User.findOne({email});
 
         if(user){
-            return res.json({success: false, Message: "Account already exists"})  
+            return res.json({success: false, message: "Account already exists"})  
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -28,7 +28,7 @@ export const signup = async (req, res)=>{
         res.json({success: true, userData: newUser, token, message: "Account created successfully"})
     } catch (error) {
         console.log(error.message);
-        res.json({success: false, Message: error.message})
+        res.json({success: false, message: error.message})
         
     }
 }
@@ -54,7 +54,7 @@ export const login = async (req, res) =>{
         res.json({success: true, userData, token, message: "Login successful"})
     } catch (error) {
         console.log(error.message);
-        res.json({success: false, Message: error.message}) 
+        res.json({success: false, message: error.message}) 
     }
 }
 // Controller to check if user is authenticated
