@@ -2,24 +2,49 @@
 
 @import "tailwindcss";
 
-*{
+/* Base Styles */
+* {
   font-family: "Outfit", sans-serif;
   box-sizing: border-box;
-}
-
-::-webkit-scrollbar{
-  display: none;
-}
-
-/* Responsive improvements */
-html, body {
-  overflow-x: hidden;
   margin: 0;
   padding: 0;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.5);
+}
+
+/* Hide scrollbar for mobile */
+@media (max-width: 640px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Root and Body Setup */
+html, body {
+  overflow-x: hidden;
   height: 100%;
   width: 100%;
   position: fixed;
   overscroll-behavior: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
@@ -30,45 +55,121 @@ html, body {
   position: relative;
 }
 
-/* Mobile specific fixes */
+/* iOS Safari Height Fix */
 @supports (-webkit-touch-callout: none) {
   #root {
     height: -webkit-fill-available;
   }
 }
 
-/* Touch-friendly tap targets for mobile */
+/* Mobile Optimizations */
 @media (max-width: 640px) {
-  button, a, [role="button"] {
+  /* Touch-friendly tap targets */
+  button, a, [role="button"], label[for] {
     min-height: 44px;
     min-width: 44px;
   }
   
-  /* Prevent text selection on mobile for better UX */
+  /* Prevent unwanted interactions */
   * {
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
   
-  /* Better scrolling on iOS */
+  /* Allow text selection for inputs */
+  input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+  
+  /* Smooth scrolling on iOS */
   * {
     -webkit-overflow-scrolling: touch;
   }
 }
 
-/* Smooth scrolling */
+/* Tablet Optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  /* Better spacing for tablet */
+  body {
+    font-size: 15px;
+  }
+}
+
+/* Desktop Optimizations */
+@media (min-width: 1025px) {
+  /* Better hover states */
+  button:hover, a:hover {
+    transform: translateY(-1px);
+  }
+}
+
+/* Smooth Scrolling */
 * {
   scroll-behavior: smooth;
 }
 
-/* Selection color */
+/* Selection Styling */
 ::selection {
   background-color: rgba(139, 92, 246, 0.3);
   color: white;
 }
 
-/* Focus visible for accessibility */
+::-moz-selection {
+  background-color: rgba(139, 92, 246, 0.3);
+  color: white;
+}
+
+/* Focus Styles for Accessibility */
 *:focus-visible {
   outline: 2px solid rgba(139, 92, 246, 0.5);
   outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Input Focus Styles */
+input:focus, textarea:focus {
+  outline: none;
+}
+
+/* Image Optimization */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Safe Area Insets for Notched Devices */
+@supports (padding: max(0px)) {
+  .safe-area-inset-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+  
+  .safe-area-inset-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+}
+
+/* Animation Utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Loading States */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
 }
