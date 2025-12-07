@@ -25,7 +25,7 @@ const Sidebar = () => {
     },[onlineUsers])
 
   return (
-    <div className={`bg-[#8185B2]/10 h-full p-3 sm:p-4 md:p-5 rounded-r-xl overflow-y-scroll text-white ${selectedUser ? "max-md:hidden" : ''}`}>
+    <div className={`bg-[#8185B2]/10 h-full max-h-screen p-3 sm:p-4 md:p-5 rounded-r-xl overflow-y-auto text-white ${selectedUser ? "max-md:hidden" : ''}`}>
       <div className='pb-3 sm:pb-5'>
         <div className='flex justify-between items-center gap-2'>
             <img src={assets.logo} alt="logo" className='max-w-32 sm:max-w-40' />

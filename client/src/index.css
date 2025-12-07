@@ -16,10 +16,25 @@ html, body {
   overflow-x: hidden;
   margin: 0;
   padding: 0;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  overscroll-behavior: none;
 }
 
 #root {
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Mobile specific fixes */
+@supports (-webkit-touch-callout: none) {
+  #root {
+    height: -webkit-fill-available;
+  }
 }
 
 /* Touch-friendly tap targets for mobile */
@@ -27,6 +42,17 @@ html, body {
   button, a, [role="button"] {
     min-height: 44px;
     min-width: 44px;
+  }
+  
+  /* Prevent text selection on mobile for better UX */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+  
+  /* Better scrolling on iOS */
+  * {
+    -webkit-overflow-scrolling: touch;
   }
 }
 

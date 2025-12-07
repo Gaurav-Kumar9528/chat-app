@@ -77,47 +77,49 @@ const ChatContainer = () => {
   },[messages])
 
   return selectedUser ? (
-    <div className='h-full overflow-hidden relative backdrop-blur-lg flex flex-col'>
+    <div className='h-full max-h-screen overflow-hidden relative backdrop-blur-lg flex flex-col'>
       {/* ------- header ------- */}
-      <div className='flex items-center gap-2 sm:gap-3 py-2 sm:py-3 px-3 sm:px-4 border-b border-stone-500 flex-shrink-0'>
-        <img src={selectedUser.profilePic || assets.avatar_icon} alt="" className='w-7 sm:w-8 rounded-full flex-shrink-0'/>
+      <div className='flex items-center gap-2 sm:gap-3 py-2.5 sm:py-3 px-3 sm:px-4 border-b border-stone-500 flex-shrink-0 bg-[#8185B2]/10'>
+        <img src={selectedUser.profilePic || assets.avatar_icon} alt="" className='w-8 sm:w-9 md:w-10 rounded-full flex-shrink-0'/>
         <p className='flex-1 text-base sm:text-lg text-white flex items-center gap-2 min-w-0'>
-            <span className='truncate'>{selectedUser.fullName}</span>
+            <span className='truncate font-medium'>{selectedUser.fullName}</span>
             {onlineUsers.includes(selectedUser._id) && <span className='w-2 h-2 rounded-full bg-green-500 flex-shrink-0'></span>}
         </p>
-        <img onClick={()=> setSelectedUser(null)} src={assets.arrow_icon} alt="Back" className='md:hidden w-6 sm:w-7 cursor-pointer flex-shrink-0'/>
+        <button onClick={()=> setSelectedUser(null)} className='md:hidden w-8 h-8 flex items-center justify-center flex-shrink-0 active:opacity-70'>
+          <img src={assets.arrow_icon} alt="Back" className='w-6 h-6'/>
+        </button>
         <img src={assets.help_icon} alt="Help" className='max-md:hidden w-5 cursor-pointer flex-shrink-0'/>
       </div>
       {/* ------- chat area ------- */}
-      <div className='flex flex-col flex-1 overflow-y-scroll p-2 sm:p-3 pb-20 sm:pb-24'>
+      <div className='flex flex-col flex-1 overflow-y-auto p-3 sm:p-4 pb-20 sm:pb-24 min-h-0' style={{WebkitOverflowScrolling: 'touch'}}>
         {messages.length === 0 ? (
           <div className='flex flex-col items-center justify-center h-full text-gray-400'>
             <p className='text-sm sm:text-base'>No messages yet. Start the conversation!</p>
           </div>
         ) : (
           messages.map((msg)=> (
-            <div key={msg._id || msg.id || Date.now() + Math.random()} className={`flex items-end gap-2 mb-2 sm:mb-4 ${msg.senderId === authUser._id ? 'justify-end' : 'justify-start'}`}> 
+            <div key={msg._id || msg.id || Date.now() + Math.random()} className={`flex items-end gap-2 mb-3 ${msg.senderId === authUser._id ? 'justify-end' : 'justify-start'}`}> 
                 {msg.senderId !== authUser._id && (
-                  <div className='text-center text-xs flex-shrink-0 order-1'>
+                  <div className='text-center flex-shrink-0 order-1'>
                       <img src={selectedUser?.profilePic || assets.avatar_icon} 
-                        alt="" className='w-6 sm:w-7 rounded-full' />
-                      <p className='text-gray-500 text-[10px] sm:text-xs mt-1'>{formatMessageTime(msg.createdAt)}</p>
+                        alt="" className='w-7 h-7 sm:w-8 sm:h-8 rounded-full' />
+                      <p className='text-gray-500 text-[10px] mt-1 hidden sm:block'>{formatMessageTime(msg.createdAt)}</p>
                   </div>
                 )}
                 {msg.image ? (
-                   <img src={msg.image} alt="Shared" className={`max-w-[70%] sm:max-w-[230px] border border-gray-700 rounded-lg overflow-hidden ${msg.senderId === authUser._id ? 'order-2' : 'order-2'}`}/>
+                   <img src={msg.image} alt="Shared" className={`max-w-[80%] sm:max-w-[60%] md:max-w-[230px] border border-gray-700 rounded-xl overflow-hidden order-2 shadow-lg`}/>
                 ):(
-                   <p className={`p-2 sm:p-3 max-w-[75%] sm:max-w-[200px] md:max-w-[250px] text-sm sm:text-base font-light rounded-lg break-words text-white order-2 ${
+                   <p className={`px-4 py-2.5 sm:px-4 sm:py-2.5 max-w-[80%] sm:max-w-[60%] md:max-w-[250px] text-sm sm:text-base rounded-2xl break-words text-white order-2 shadow-sm ${
                     msg.senderId === authUser._id 
-                      ? 'bg-violet-500/50 rounded-br-none' 
-                      : 'bg-gray-700/50 rounded-bl-none'
+                      ? 'bg-violet-500 rounded-br-sm' 
+                      : 'bg-gray-700/70 rounded-bl-sm'
                   }`}>{msg.text}</p>
                 )}
                 {msg.senderId === authUser._id && (
-                  <div className='text-center text-xs flex-shrink-0 order-3'>
+                  <div className='text-center flex-shrink-0 order-3'>
                       <img src={authUser?.profilePic || assets.avatar_icon} 
-                        alt="" className='w-6 sm:w-7 rounded-full' />
-                      <p className='text-gray-500 text-[10px] sm:text-xs mt-1'>{formatMessageTime(msg.createdAt)}</p>
+                        alt="" className='w-7 h-7 sm:w-8 sm:h-8 rounded-full' />
+                      <p className='text-gray-500 text-[10px] mt-1 hidden sm:block'>{formatMessageTime(msg.createdAt)}</p>
                   </div>
                 )}
             </div>
@@ -127,18 +129,19 @@ const ChatContainer = () => {
       </div>
 
 {/* ------- bottom area ------- */}
-    <div className='absolute bottom-0 left-0 right-0 flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-[#8185B2]/5 backdrop-blur-sm border-t border-stone-500'>
-        <div className='flex-1 flex items-center bg-gray-100/12 px-2 sm:px-3 rounded-full'>
+    <div className='sticky bottom-0 left-0 right-0 flex items-center gap-2 sm:gap-3 p-2.5 sm:p-3 bg-[#8185B2]/10 backdrop-blur-md border-t border-stone-500/50 flex-shrink-0 z-10 safe-area-inset-bottom'>
+        <div className='flex-1 flex items-center bg-gray-100/15 px-3 sm:px-4 rounded-full border border-gray-600/30 min-h-[44px]'>
             <input onChange={(e)=> setInput(e.target.value)} value={input} 
-            onKeyDown={(e)=> e.key === "Enter" ? handleSendMessage(e) : null} type="text" placeholder='send a message' 
-            className='flex-1 text-xs sm:text-sm p-2 sm:p-3 border-none rounded-lg outline-none text-white placeholder-gray-400 bg-transparent'/>
-            <input onChange={handleSendImage} type="file" id='image' accept='image/png, image/jpeg' hidden/>
-            <label htmlFor="image" className='cursor-pointer'>
-                <img src={assets.gallery_icon} alt="Upload image" className='w-4 sm:w-5 mr-1 sm:mr-2'/>
+            onKeyDown={(e)=> e.key === "Enter" ? handleSendMessage(e) : null} 
+            type="text" placeholder='send a message' 
+            className='flex-1 text-sm sm:text-base py-2 sm:py-2.5 border-none rounded-lg outline-none text-white placeholder-gray-400 bg-transparent'/>
+            <input onChange={handleSendImage} type="file" id='image' accept='image/png, image/jpeg, image/jpg, image/webp' hidden/>
+            <label htmlFor="image" className='cursor-pointer active:opacity-70 p-1.5 flex items-center justify-center min-w-[44px] min-h-[44px]'>
+                <img src={assets.gallery_icon} alt="Upload image" className='w-5 h-5 sm:w-6 sm:h-6'/>
             </label>
         </div>
-        <button onClick={handleSendMessage} disabled={!input.trim()} className='w-6 sm:w-7 h-6 sm:h-7 flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed'>
-          <img src={assets.send_button} alt="Send" className='w-full h-full cursor-pointer'/>
+        <button onClick={handleSendMessage} disabled={!input.trim()} className='w-11 h-11 sm:w-12 sm:h-12 flex items-center justify-center flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed active:opacity-70 bg-violet-500 rounded-full p-2.5 min-w-[44px] min-h-[44px]'>
+          <img src={assets.send_button} alt="Send" className='w-5 h-5 sm:w-6 sm:h-6'/>
         </button>
     </div>
 
